@@ -1,5 +1,7 @@
 import { Box, Button, Text, TextField, Image } from '@skynexui/components';
 import appConfig from '../config.json'
+import React from 'react';
+import { useRouter } from 'next/router';
 
 function GlobalStyle() {
     return (
@@ -65,11 +67,13 @@ function Title(props) {
 //   export default HomePage
 
 export default function PaginaInicial() {
-    const username = 'gabodin';
+    // const username = 'gabodin';
+    // Hooks - está associado ao use - ganho para roteamento, por ex.
+    const [username, setUserName] = React.useState('gabodin');
+    const roteamento = useRouter();
   
     return (
       <>
-        <GlobalStyle />
         <Box
           styleSheet={{
             display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -96,6 +100,12 @@ export default function PaginaInicial() {
             {/* Formulário */}
             <Box
               as="form"
+              onSubmit={function(infosDoEvento) {
+                infosDoEvento.preventDefault();
+                console.log("Alguém tentou recarregar a página")
+                // window.location.href = '/chat'
+                roteamento.push('/chat');
+              }}
               styleSheet={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 width: { xs: '100%', sm: '50%' }, textAlign: 'center', marginBottom: '32px',
@@ -105,9 +115,23 @@ export default function PaginaInicial() {
               <Text variant="body3" styleSheet={{ marginBottom: '32px', color: appConfig.theme.colors.neutrals[300] }}>
                 {appConfig.name}
               </Text>
+
+              {/* <input
+                  type="text"
+                  
+                  /> */}
   
               <TextField
                 fullWidth
+                value={username}
+                onChange={function(event) {
+                  console.log("Usuário digitou", event.target.value)
+                  // Onde está o valor
+                  const value = event.target.value;
+                  // Trocar o valor da variável
+                  // através do React e avisa quem precisa
+                  setUserName(value);
+                }}
                 textFieldColors={{
                   neutral: {
                     textColor: appConfig.theme.colors.neutrals[200],
