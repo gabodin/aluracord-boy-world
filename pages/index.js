@@ -3,35 +3,6 @@ import appConfig from '../config.json'
 import React from 'react';
 import { useRouter } from 'next/router';
 
-function GlobalStyle() {
-    return (
-      <style global jsx>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-          list-style: none;
-        }
-        body {
-          font-family: 'Open Sans', sans-serif;
-        }
-        /* App fit Height */ 
-        html, body, #__next {
-          min-height: 100vh;
-          display: flex;
-          flex: 1;
-        }
-        #__next {
-          flex: 1;
-        }
-        #__next > * {
-          flex: 1;
-        }
-        /* ./App fit Height */ 
-      `}</style>
-    );
-  }
-
 function Title(props) {
     console.log(props);
     const Tag = props.tag || 'h1';
@@ -70,6 +41,7 @@ export default function PaginaInicial() {
     // const username = 'gabodin';
     // Hooks - está associado ao use - ganho para roteamento, por ex.
     const [username, setUserName] = React.useState('gabodin');
+    const [usrUrl, setUsrUrl] = React.useState('gabodin')
     const roteamento = useRouter();
   
     return (
@@ -123,14 +95,19 @@ export default function PaginaInicial() {
   
               <TextField
                 fullWidth
-                value={username}
+                value={usrUrl}
                 onChange={function(event) {
                   console.log("Usuário digitou", event.target.value)
                   // Onde está o valor
                   const value = event.target.value;
                   // Trocar o valor da variável
                   // através do React e avisa quem precisa
-                  setUserName(value);
+                  
+                  setUsrUrl(value);
+                  if(value.length < 3) {
+                    setUserName('')
+                  } else 
+                    setUserName(value);
                 }}
                 textFieldColors={{
                   neutral: {
