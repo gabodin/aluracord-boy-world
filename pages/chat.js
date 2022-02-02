@@ -1,24 +1,55 @@
 import { Box, Text, TextField, Image, Button } from '@skynexui/components';
 import React from 'react';
 import appConfig from '../config.json';
+import { createClient } from '@supabase/supabase-js'
+
+
+const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTY0MzU3NzU4MCwiZXhwIjoxOTU5MTUzNTgwfQ.0df3iX9Mwbw1vY5QyUWfzIDSo6_WIdZlY0DqSwOeTYs';
+const SUPABASE_URL = 'https://nfxirtpdlvulfptkbfof.supabase.co';
+const supabaseClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+   
+supabaseClient
+    .from('mensagens')
+    .select('*')
+    .then( (data) => {
+        console.log(data);
+    });
 
 export default function ChatPage() {
-    // Sua lógica vai aqui
     const [mensagem, setMensagem] = React.useState('');
     const [listaDeMensagens, setlistaDeMensagens] = React.useState([]);
+
+    React.useEffect( () => {
+        supabaseClient
+            .from('mensagens')
+            .select('*')
+            .order('id', {ascending: false})
+            .then( ({data}) => {
+                console.log(data);
+                setlistaDeMensagens(data);
+            });
+    }, []);
 
     function handleNovaMensagem(novaMensagem) {
         const mensagem = {
             texto: novaMensagem,
-            de: 'vanessatonini',
-            id: listaDeMensagens.length + 1,
+            de: 'gabodin'
         };
-        setlistaDeMensagens(
-            [
-                mensagem,
-                ...listaDeMensagens
-            ]
-        );
+
+        supabaseClient
+            .from('mensagens')
+            .insert([
+                mensagem
+            ])
+            .then( ({data}) => {
+                setlistaDeMensagens(
+                    [
+                        data[0],
+                        ...listaDeMensagens
+                    ]
+                );
+            })
+
         setMensagem('');
     }
     // ./Sua lógica vai aqui
@@ -78,7 +109,7 @@ export default function ChatPage() {
                             onKeyPress={(event) => {
                                 if(event.key === 'Enter') {
                                     event.preventDefault();
-                                    const novaMensagem = mensagem
+                                    const novaMensagem = mensagem;
                                     handleNovaMensagem(novaMensagem);
                                 }
                             }}
@@ -121,7 +152,6 @@ function Header() {
 }
 
 function MessageList(props) {
-    console.log(props.mensagens);
     return (
         <Box
             tag="ul"
@@ -161,7 +191,7 @@ function MessageList(props) {
                                     display: 'inline-block',
                                     marginRight: '8px',
                                 }}
-                                src={`https://github.com/vanessametonini.png`}
+                                src={`https://github.com/${mensagem.de}.png`}
                             />
                             <Text tag="strong">
                                 {mensagem.de}
